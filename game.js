@@ -47,6 +47,14 @@ function saveDiamonds(amount) {
     localStorage.setItem(DIAMONDS_STORAGE_KEY, JSON.stringify({ diamonds: amount }));
 }
 
+function resetDiamonds() {
+    if (confirm("Reset Yusuf's Diamonds to 0?")) {
+        saveDiamonds(0);
+        updateDiamondsDisplay();
+        alert('Diamonds reset to 0!');
+    }
+}
+
 function updateDiamondsDisplay() {
     const diamonds = loadDiamonds();
     // Update all diamond displays

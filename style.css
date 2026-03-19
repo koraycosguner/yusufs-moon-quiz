@@ -285,6 +285,21 @@ body::before {
     box-shadow: 0 8px 30px rgba(142, 45, 226, 0.6);
 }
 
+.reset-diamonds-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    padding: 0.3rem 0.8rem;
+    transition: color 0.3s;
+}
+
+.reset-diamonds-btn:hover {
+    color: rgba(255,255,255,0.6);
+}
+
 /* ===== Game Header ===== */
 .game-layout {
     display: flex;
