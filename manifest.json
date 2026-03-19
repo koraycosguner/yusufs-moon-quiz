@@ -1,0 +1,11 @@
+{
+    "name": "Yusuf's Moon Phases Quiz",
+    "short_name": "Moon Quiz",
+    "description": "Fun interactive quiz about moon phases for kids",
+    "start_url": ".",
+    "display": "fullscreen",
+    "orientation": "any",
+    "background_color": "#1a1a2e",
+    "theme_color": "#1a1a2e",
+    "icons": []
+}

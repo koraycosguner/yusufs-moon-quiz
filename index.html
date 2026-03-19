@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Yusuf's Moon Phases Quiz!</title>
+
+    <!-- PWA / Full-screen on iPad -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Moon Quiz">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen active">
+        <div class="start-container">
+            <div class="moon-hero">🌙</div>
+            <h1 class="title bounce">Yusuf's Moon Phases Quiz! 🌟</h1>
+            <p class="subtitle">Learn about the phases of the moon!</p>
+
+            <!-- Diamonds display -->
+            <div id="diamonds-banner" class="diamonds-banner">
+                <span class="diamonds-gem">💎</span>
+                <span id="diamonds-total">0</span> Diamonds earned
+            </div>
+
+            <div class="mode-selection">
+                <h2>Pick your quiz:</h2>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" onclick="setMode('identify', this)">
+                        <span class="mode-icon">🌓</span>
+                        <span class="mode-label">Name That<br>Moon Phase</span>
+                        <small>💎 1 each</small>
+                    </button>
+                    <button class="mode-btn" onclick="setMode('spell', this)">
+                        <span class="mode-icon">✏️</span>
+                        <span class="mode-label">Spell the<br>Moon Phase</span>
+                        <small>💎 1 each</small>
+                    </button>
+                    <button class="mode-btn" onclick="setMode('match', this)">
+                        <span class="mode-icon">🔄</span>
+                        <span class="mode-label">Moon Phase<br>Order</span>
+                        <small>💎 1 each</small>
+                    </button>
+                    <button class="mode-btn" onclick="setMode('position', this)">
+                        <span class="mode-icon">🌍</span>
+                        <span class="mode-label">Moon<br>Position</span>
+                        <small>💎 1 each</small>
+                    </button>
+                </div>
+            </div>
+
+            <button class="start-game-btn" onclick="startSelected()">
+                🚀 Start!
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Screen (Identify Mode) -->
+    <div id="quiz-screen" class="screen">
+        <div class="game-layout">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">🏠 Home</button>
+                <div class="score-display">
+                    <span class="stars-label">⭐</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="streak-display">
+                    <span id="streak-text">🔥 0</span>
+                </div>
+                <div id="diamonds-display" class="diamonds-display">
+                    <span>💎</span>
+                    <span id="diamonds-game">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                    <span id="progress-text">0 / 10</span>
+                </div>
+            </div>
+
+            <div class="quiz-main">
+                <div class="moon-display">
+                    <div id="moon-visual" class="moon-visual">🌑</div>
+                    <p class="moon-question">What phase is this moon?</p>
+                </div>
+
+                <div id="choices-area" class="choices-area">
+                    <!-- Choices will be inserted here -->
+                </div>
+
+                <div id="feedback-message" class="feedback-message hidden"></div>
+            </div>
+        </div>
+
+        <!-- Feedback overlay -->
+        <div id="feedback-overlay" class="feedback-overlay hidden">
+            <div id="feedback-content" class="feedback-content"></div>
+        </div>
+    </div>
+
+    <!-- Spell Mode Screen -->
+    <div id="spell-screen" class="screen">
+        <div class="game-layout">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">🏠 Home</button>
+                <div class="score-display">
+                    <span class="stars-label">⭐</span>
+                    <span id="spell-score">0</span>
+                </div>
+                <div class="streak-display">
+                    <span id="spell-streak-text">🔥 0</span>
+                </div>
+                <div id="spell-diamonds-display" class="diamonds-display">
+                    <span>💎</span>
+                    <span id="spell-diamonds-game">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="spell-progress-fill" class="progress-fill"></div>
+                    <span id="spell-progress-text">0 / 8</span>
+                </div>
+            </div>
+
+            <div class="quiz-main">
+                <div class="moon-display">
+                    <div id="spell-moon-visual" class="moon-visual">🌑</div>
+                    <p class="moon-question">Type the name of this moon phase:</p>
+                </div>
+
+                <div class="spell-input-area">
+                    <input type="text" id="spell-input" class="spell-input"
+                           autocomplete="off" autocapitalize="off" spellcheck="false"
+                           placeholder="Type the moon phase name..."
+                           onkeydown="handleSpellKeyPress(event)">
+                    <button class="spell-submit-btn" onclick="checkSpelling()">✓ Check</button>
+                </div>
+
+                <div id="spell-feedback" class="spell-feedback hidden"></div>
+                <div id="spell-hint" class="spell-hint hidden"></div>
+            </div>
+        </div>
+
+        <div id="spell-feedback-overlay" class="feedback-overlay hidden">
+            <div id="spell-feedback-content" class="feedback-content"></div>
+        </div>
+    </div>
+
+    <!-- Order Mode Screen -->
+    <div id="order-screen" class="screen">
+        <div class="game-layout">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">🏠 Home</button>
+                <div class="score-display">
+                    <span class="stars-label">⭐</span>
+                    <span id="order-score">0</span>
+                </div>
+                <div id="order-diamonds-display" class="diamonds-display">
+                    <span>💎</span>
+                    <span id="order-diamonds-game">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="order-progress-fill" class="progress-fill"></div>
+                    <span id="order-progress-text">0 / 8</span>
+                </div>
+            </div>
+
+            <div class="quiz-main">
+                <div class="order-instruction">
+                    <p id="order-question">Tap the moon phases in the correct order!</p>
+                </div>
+
+                <div id="order-placed" class="order-placed">
+                    <!-- Placed moons show here -->
+                </div>
+
+                <div id="order-choices" class="order-choices">
+                    <!-- Shuffled choices here -->
+                </div>
+
+                <div class="order-controls">
+                    <button class="undo-btn" onclick="undoOrder()">↩️ Undo</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="order-feedback-overlay" class="feedback-overlay hidden">
+            <div id="order-feedback-content" class="feedback-content"></div>
+        </div>
+    </div>
+
+    <!-- Position Mode Screen -->
+    <div id="position-screen" class="screen">
+        <div class="game-layout">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">🏠 Home</button>
+                <div class="score-display">
+                    <span class="stars-label">⭐</span>
+                    <span id="pos-score">0</span>
+                </div>
+                <div class="streak-display">
+                    <span id="pos-streak-text">🔥 0</span>
+                </div>
+                <div id="pos-diamonds-display" class="diamonds-display">
+                    <span>💎</span>
+                    <span id="pos-diamonds-game">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="pos-progress-fill" class="progress-fill"></div>
+                    <span id="pos-progress-text">0 / 20</span>
+                </div>
+            </div>
+
+            <div class="quiz-main">
+                <div class="pos-question-area">
+                    <div id="pos-phase-display" class="pos-phase-display">
+                        <span id="pos-phase-emoji" class="pos-phase-emoji">🌑</span>
+                        <span id="pos-phase-name" class="pos-phase-name">New Moon</span>
+                    </div>
+                    <p class="moon-question">Where should the moon be?</p>
+                </div>
+
+                <div class="orbit-diagram-container">
+                    <canvas id="orbit-canvas" width="400" height="400"></canvas>
+                    <div id="orbit-positions" class="orbit-positions">
+                        <!-- 8 clickable positions will be generated by JS -->
+                    </div>
+                </div>
+
+                <div id="pos-feedback" class="spell-feedback hidden"></div>
+            </div>
+        </div>
+
+        <div id="pos-feedback-overlay" class="feedback-overlay hidden">
+            <div id="pos-feedback-content" class="feedback-content"></div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="screen">
+        <div class="results-container">
+            <h1 id="results-title" class="results-title">🎉 Great Job! 🎉</h1>
+            <div class="results-mascot">🌙</div>
+            <div class="results-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-label">Score</span>
+                    <span id="final-score" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">✅</span>
+                    <span class="stat-label">Correct</span>
+                    <span id="final-correct" class="stat-value">0 / 10</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🔥</span>
+                    <span class="stat-label">Best Streak</span>
+                    <span id="final-streak" class="stat-value">0</span>
+                </div>
+            </div>
+            <div id="star-rating" class="star-rating"></div>
+            <div id="diamonds-results" class="diamonds-results-box" style="display:none;">
+                <div class="diamonds-earned">💎 +<span id="diamonds-session">0</span> Diamonds this game!</div>
+                <div class="diamonds-total-result-text">Total: 💎 <span id="diamonds-total-result">0</span></div>
+            </div>
+
+            <!-- Moon Phase Reference Card -->
+            <div class="moon-reference">
+                <h3>Moon Phases Reference 🌙</h3>
+                <div class="reference-phases">
+                    <div class="ref-phase"><span class="ref-emoji">🌑</span><span class="ref-name">New Moon</span></div>
+                    <div class="ref-phase"><span class="ref-emoji">🌒</span><span class="ref-name">Waxing Crescent</span></div>
+                    <div class="ref-phase"><span class="ref-emoji">🌓</span><span class="ref-name">First Quarter</span></div>
+                    <div class="ref-phase"><span class="ref-emoji">🌔</span><span class="ref-name">Waxing Gibbous</span></div>
+                    <div class="ref-phase"><span class="ref-emoji">🌕</span><span class="ref-name">Full Moon</span></div>
+                    <div class="ref-phase"><span class="ref-emoji">🌖</span><span class="ref-name">Waning Gibbous</span></div>
+                    <div class="ref-phase"><span class="ref-emoji">🌗</span><span class="ref-name">Third Quarter</span></div>
+                    <div class="ref-phase"><span class="ref-emoji">🌘</span><span class="ref-name">Waning Crescent</span></div>
+                </div>
+            </div>
+
+            <div class="results-buttons">
+                <button class="play-again-btn" onclick="playAgain()">🔄 Play Again</button>
+                <button class="home-btn" onclick="goHome()">🏠 Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="game.js"></script>
+</body>
+</html>
