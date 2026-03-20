@@ -711,15 +711,21 @@ function startPositionQuiz() {
 }
 
 function drawOrbitDiagram() {
-    const canvas = document.getElementById('orbit-canvas');
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width;
-    const h = canvas.height;
-    const cx = w / 2;
-    const cy = h / 2;
-    const orbitR = 140;
+    const container = document.querySelector('.orbit-diagram-container');
+    const size = container.offsetWidth || 360;
 
-    ctx.clearRect(0, 0, w, h);
+    const canvas = document.getElementById('orbit-canvas');
+    // Match canvas resolution to container size
+    canvas.width = size;
+    canvas.height = size;
+
+    const ctx = canvas.getContext('2d');
+    const cx = size / 2;
+    const cy = size / 2;
+    const orbitR = size * 0.35; // 35% of container size
+    const sunX = size * 0.08;  // Sun position (8% from left)
+
+    ctx.clearRect(0, 0, size, size);
 
     // Draw orbit path (dashed circle)
     ctx.beginPath();
@@ -731,20 +737,20 @@ function drawOrbitDiagram() {
     ctx.setLineDash([]);
 
     // Draw Sun (left side, outside orbit)
-    ctx.font = '40px serif';
+    ctx.font = `${size * 0.1}px serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('☀️', 30, cy);
+    ctx.fillText('☀️', sunX, cy);
 
     // Sun label
-    ctx.font = 'bold 12px sans-serif';
+    ctx.font = `bold ${size * 0.03}px sans-serif`;
     ctx.fillStyle = '#ffd700';
-    ctx.fillText('SUN', 30, cy + 30);
+    ctx.fillText('SUN', sunX, cy + size * 0.07);
 
     // Draw sun rays (light direction arrow)
     ctx.beginPath();
-    ctx.moveTo(60, cy);
-    ctx.lineTo(cx - orbitR - 15, cy);
+    ctx.moveTo(sunX + size * 0.07, cy);
+    ctx.lineTo(cx - orbitR - 10, cy);
     ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
     ctx.lineWidth = 2;
     ctx.setLineDash([4, 4]);
@@ -752,14 +758,14 @@ function drawOrbitDiagram() {
     ctx.setLineDash([]);
 
     // Draw Earth (center)
-    ctx.font = '35px serif';
+    ctx.font = `${size * 0.09}px serif`;
     ctx.textAlign = 'center';
     ctx.fillText('🌍', cx, cy);
 
     // Earth label
-    ctx.font = 'bold 12px sans-serif';
+    ctx.font = `bold ${size * 0.03}px sans-serif`;
     ctx.fillStyle = '#4db8ff';
-    ctx.fillText('EARTH', cx, cy + 28);
+    ctx.fillText('EARTH', cx, cy + size * 0.07);
 
     // Generate clickable position buttons
     const posContainer = document.getElementById('orbit-positions');
@@ -773,8 +779,8 @@ function drawOrbitDiagram() {
 
         const btn = document.createElement('button');
         btn.className = 'orbit-pos-btn';
-        btn.style.left = x + 'px';
-        btn.style.top = y + 'px';
+        btn.style.left = (x / size * 100) + '%';
+        btn.style.top = (y / size * 100) + '%';
         btn.textContent = '?';
         btn.dataset.phase = phaseName;
         btn.dataset.angle = angle;
